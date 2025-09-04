@@ -393,7 +393,6 @@ swww query  # Shows available monitor names
 
 - **[CONFIGURATION.md](CONFIGURATION.md)** - Complete configuration guide with examples
 - **[examples/configs/](examples/configs/)** - Ready-to-use configuration files
-- **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes  
 - **CLI Help** - `swwws-cli --help` and `swwws-daemon --help`
 
 ## Links
@@ -408,4 +407,3 @@ For questions, issues, or contributions:
 - **GitHub Issues**: [Report bugs or request features](https://github.com/Mjoyufull/swwws/issues)
 - **Documentation**: Check [CONFIGURATION.md](CONFIGURATION.md) for detailed setup
 - **Debugging**: Use `RUST_LOG=debug swwws-daemon` for detailed logs
-- **Changelog**: Review [CHANGELOG.md](CHANGELOG.md) for recent updates
