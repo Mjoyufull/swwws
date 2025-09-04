@@ -1,8 +1,9 @@
 # swwws - Slideshow Daemon for swww
 
 **swwws** is a slideshow daemon that extends [swww](https://github.com/LGFae/swww) with automated wallpaper cycling and multi-monitor support. It combines swww's smooth transitions with slideshow functionality.
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e1bf5fea-5759-43af-b1e4-ca0a5190f1b1" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/45908b63-7255-4b10-825f-778524bf7cbc" />
+<img width="1920" height="1080" alt="1757017957_grim" src="https://github.com/user-attachments/assets/a8dc7540-3425-49f1-96be-d6c0fa34e620" />
+<img width="1920" height="1080" alt="1757017929_grim" src="https://github.com/user-attachments/assets/c1acf6a7-8bec-4db8-9094-f3d6f7cfa33c" />
+
 
 
 ## Features
@@ -40,7 +41,7 @@ swww-daemon → wayland compositor
 - Inheritance: Global and per-output settings with inheritance
 - Hot-reload: Configuration changes without daemon restart
 - Validation: Configuration validation
-<img width="841" height="604" alt="image" src="https://github.com/user-attachments/assets/473649ea-5043-45bb-a567-de68a1deb772" />
+<img width="841" height="604" alt="Screenshot_20250904-203434" src="https://github.com/user-attachments/assets/f839a124-e5ef-4b1e-82be-9b2b1454e1fd" />
 
 
 ### CLI Commands
@@ -49,7 +50,8 @@ swww-daemon → wayland compositor
 - `swwws-cli pause/resume/toggle-pause` - Control slideshow
 - `swwws-cli reload` - Hot reload configuration (including monitor behavior changes)
 - `swwws-cli status` - Show current state and queue information
-- <img width="999" height="787" alt="image" src="https://github.com/user-attachments/assets/daf64893-74b0-4269-8770-58f09bb79ad9" />
+<img width="999" height="787" alt="Screenshot_20250904-203405" src="https://github.com/user-attachments/assets/6d58d037-e387-4b7a-891b-e9d0ae4b69d8" />
+
 
 
 ## Installation
