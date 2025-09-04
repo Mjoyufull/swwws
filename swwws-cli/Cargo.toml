@@ -1,0 +1,12 @@
+[package]
+name = "swwws-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+swwws-common = { path = "../swwws-common" }

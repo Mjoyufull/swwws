@@ -1,0 +1,31 @@
+# Test Configuration: Synchronized Monitor Behavior
+# All monitors show the same image at the same time
+
+[global]
+duration = "3m"
+sorting = "Random"
+transition_type = "center"
+transition_step = 90
+queue_size = 1000
+recursive = true
+
+# Synchronized mode: all monitors show same image
+monitor_behavior = "Synchronized"
+
+# Shared path for all outputs
+[any]
+path = "/path/to/wallpapers"
+
+# Each output can still have different transition types
+[outputs."HDMI-A-1"]
+transition_type = "wipe"
+transition_step = 45
+transition_angle = 45.0
+
+[outputs."DP-2"] 
+transition_type = "fade"
+transition_step = 60
+
+[outputs."DP-3"]
+transition_type = "outer"
+transition_step = 30

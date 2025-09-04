@@ -1,0 +1,39 @@
+# Test Configuration: Grouped Monitor Behavior
+# Monitors in groups share wallpapers
+
+[global]
+duration = "3m"
+sorting = "Random"
+transition_type = "center"
+transition_step = 90
+queue_size = 1000
+recursive = true
+
+# Grouped mode: custom groups of monitors
+monitor_behavior = "Grouped"
+
+# Define monitor groups
+monitor_groups = [
+    ["HDMI-A-1", "DP-2"],     # Group 1: Main displays
+    ["DP-3"]                  # Group 2: Secondary display
+]
+
+# Default for all outputs
+[any]
+path = "/path/to/wallpapers"
+
+# Group-specific configurations
+[outputs."HDMI-A-1"]
+# This will be the configuration for the entire group
+duration = "5m"
+transition_type = "wipe"
+
+[outputs."DP-2"] 
+# Can override transition for this specific output in the group
+transition_type = "fade"
+
+[outputs."DP-3"]
+# This is its own group with different content
+path = "/path/to/secondary/wallpapers"
+duration = "10m"
+transition_type = "outer"

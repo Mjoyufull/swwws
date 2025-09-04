@@ -1,0 +1,33 @@
+# Test Configuration: Independent Monitor Behavior
+# Each monitor has its own queue and timing
+
+[global]
+duration = "3m"
+sorting = "Random"
+transition_type = "center"
+transition_step = 90
+queue_size = 1000
+recursive = true
+
+# Independent mode (default): each monitor manages its own wallpapers
+monitor_behavior = "Independent"
+
+# Default for all outputs
+[any]
+path = "/path/to/wallpapers"
+
+# Each output can have different configurations
+[outputs."HDMI-A-1"]
+path = "/path/to/work/wallpapers"
+duration = "15m"
+transition_type = "wipe"
+
+[outputs."DP-2"]
+path = "/path/to/personal/wallpapers" 
+duration = "5m"
+transition_type = "fade"
+
+[outputs."DP-3"]
+path = "/path/to/nature/wallpapers"
+duration = "10m"
+transition_type = "outer"

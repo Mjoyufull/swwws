@@ -1,0 +1,64 @@
+[workspace]
+resolver = "2"
+members = [
+    "swwws-daemon",
+    "swwws-cli", 
+    "swwws-common",
+    "swwws-config"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["swwws contributors"]
+license = "MIT"
+rust-version = "1.87.0"
+
+[workspace.dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+clap = { version = "4.0", features = ["derive"] }
+log = "0.4"
+env_logger = "0.10"
+anyhow = "1.0"
+thiserror = "1.0"
+walkdir = "2.4"
+humantime = "2.1"
+humantime-serde = "1.1"
+which = "5.0"
+rand = "0.8"
+dirs = "5.0"
+
+[workspace.lints.clippy]
+correctness = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+complexity = { level = "warn", priority = -1 }
+#pedantic = { level = "warn", priority = -1 }
+
+module-name-repetitions = "allow"
+missing-errors-doc = "allow"
+missing-panics-doc = "allow"
+
+# Enable some optimizations in debug mode. Otherwise, it is a pain to test it
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies, but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+debug = 0
+lto = true
+opt-level = 3
+codegen-units = 1
+strip = true
+
+[profile.bench]
+lto = "thin"
+debug = 1
+strip = false
