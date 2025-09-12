@@ -1,5 +1,7 @@
 target/*
 completions/*
 tests/test_images/*
+# swww source code (for reference only)
+swww/
 # Nix
 result

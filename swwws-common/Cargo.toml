@@ -18,6 +18,8 @@ rand = { workspace = true }
 log = "0.4"
 dirs = { workspace = true }
 chrono = { version = "0.4", features = ["serde"] }
+rustix = { workspace = true }
+libc = { workspace = true }
 
 [dev-dependencies]
 tempfile = "3.8"

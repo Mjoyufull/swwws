@@ -30,6 +30,8 @@ humantime-serde = "1.1"
 which = "5.0"
 rand = "0.8"
 dirs = "5.0"
+rustix = { version = "0.38", features = ["net", "fs", "process", "mm"] }
+libc = "0.2"
 
 [workspace.lints.clippy]
 correctness = { level = "deny", priority = -1 }

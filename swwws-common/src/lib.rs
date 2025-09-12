@@ -7,6 +7,7 @@ pub mod duration;
 pub mod ipc;
 pub mod state;
 pub mod error;
+pub mod swww_client;
 
 pub use queue::{Queue, Sorting};
 pub use image_discovery::ImageDiscovery;
@@ -17,6 +18,7 @@ pub use duration::parse_duration;
 pub use ipc::{IpcClient, IpcServer, IpcCommand, IpcResponse, OutputStatus};
 pub use state::{DaemonState, OutputState};
 pub use error::{SwwwsError, Result, ErrorReporting};
+pub use swww_client::{SwwwClient, SwwwOutput, SwwwTransition};
 
 #[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub enum MonitorBehavior {
