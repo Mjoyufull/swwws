@@ -1,12 +1,9 @@
 {
-  description = "SWWWS - Simple Wayland Wallpaper Slideshow";
+  description = "swwws - Slideshow daemon for swww with automated wallpaper cycling and multi-monitor support";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -16,75 +13,48 @@
   outputs = {
     self,
     nixpkgs,
+    flake-utils,
     rust-overlay,
-    ...
-  }: let
-    inherit (nixpkgs) lib;
-    systems = [
-      "x86_64-linux"
-    ];
-    pkgsFor = lib.genAttrs systems (system:
-      import nixpkgs {
-        localSystem.system = system;
+  }:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {
+        inherit system;
         overlays = [(import rust-overlay)];
-      });
-    cargoToml = lib.importTOML ./Cargo.toml;
-    inherit (cargoToml.workspace.package) rust-version;
-  in {
-    packages =
-      lib.mapAttrs (system: pkgs: {
-        swwws = let
-          rust = pkgs.rust-bin.stable.${rust-version}.default;
+      };
+      cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+      inherit (cargoToml.workspace.package) rust-version version;
+      
+      rustPlatform = pkgs.makeRustPlatform {
+        cargo = pkgs.rust-bin.stable.${rust-version}.default;
+        rustc = pkgs.rust-bin.stable.${rust-version}.default;
+      };
+    in {
+      packages = {
+        swwws = rustPlatform.buildRustPackage {
+          pname = "swwws";
+          inherit version;
 
-          rustPlatform = pkgs.makeRustPlatform {
-            cargo = rust;
-            rustc = rust;
+          src = pkgs.lib.cleanSource ./.;
+
+          cargoLock.lockFile = ./Cargo.lock;
+
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+          ];
+
+          # Skip tests in sandboxed build environment
+          doCheck = false;
+
+          meta = with pkgs.lib; {
+            description = "Slideshow daemon for swww with automated wallpaper cycling and multi-monitor support";
+            homepage = "https://github.com/Mjoyufull/swwws";
+            license = licenses.mit;
+            platforms = platforms.linux;
+            mainProgram = "swwws-daemon";
           };
-        in
-          rustPlatform.buildRustPackage {
-            pname = "swwws";
-
-            src = pkgs.nix-gitignore.gitignoreSource [] ./.;
-            inherit (cargoToml.workspace.package) version;
-
-            cargoLock.lockFile = ./Cargo.lock;
-
-            buildInputs = with pkgs; [
-              # swwws requires swww as a runtime dependency
-            ];
-
-            doCheck = false; # Integration tests do not work in sandbox environment
-
-            nativeBuildInputs = with pkgs; [
-              pkg-config
-            ];
-
-            # No postInstall needed for swwws currently
-
-            meta = {
-              description = "Simple Wayland Wallpaper Slideshow - A daemon for automated wallpaper cycling using swww";
-              license = lib.licenses.mit;
-              platforms = lib.platforms.linux;
-              mainProgram = "swwws-daemon";
-            };
-          };
+        };
 
         default = self.packages.${system}.swwws;
-      })
-      pkgsFor;
-
-    formatter = lib.mapAttrs (_: pkgs: pkgs.alejandra) pkgsFor;
-
-    devShells =
-      lib.mapAttrs (system: pkgs: {
-        default = pkgs.mkShell {
-          inputsFrom = [self.packages.${system}.swwws];
-
-          packages = [pkgs.rust-bin.stable.${rust-version}.default];
-        };
-      })
-      pkgsFor;
-
-    overlays.default = final: prev: {inherit (self.packages.${prev.system}) swwws;};
-  };
+      };
+    });
 }
