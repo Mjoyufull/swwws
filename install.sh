@@ -270,7 +270,8 @@ monitor_behavior = "Independent"
 path = "/path/to/wallpaper"
 
 # Per-output specific configuration (optional)
-# [outputs."HDMI-A-1"]
+# Use 'swww query' to see your actual display names
+# [outputs."YOUR-MONITOR-NAME"]
 # path = "/different/path/for/this/monitor"
 # duration = "5m"
 # transition_type = "wipe"

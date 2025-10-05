@@ -232,19 +232,35 @@ impl ProcessExecutor {
         let mut outputs = Vec::new();
         
         for line in stdout.lines() {
+            let line = line.trim();
+            if line.is_empty() {
+                continue;
+            }
+            
             // Parse swww query output format: "OUTPUT_NAME: resolution, scale: ..."
             if let Some(colon_pos) = line.find(':') {
-                let output_name = line[..colon_pos].trim().to_string();
-                if !output_name.is_empty() {
-                    outputs.push(output_name);
+                let output_name = line[..colon_pos].trim();
+                if !output_name.is_empty() && output_name != "Output" {
+                    // Validate output name contains typical display connector patterns
+                    if output_name.contains('-') || output_name.to_uppercase().contains("HDMI") 
+                        || output_name.to_uppercase().contains("DP") 
+                        || output_name.to_uppercase().contains("EDP") 
+                        || output_name.to_uppercase().contains("LVDS") 
+                        || output_name.to_uppercase().contains("VGA") 
+                        || output_name.to_uppercase().contains("DVI") {
+                        outputs.push(output_name.to_string());
+                    }
                 }
             }
         }
         
         if outputs.is_empty() {
-            log::warn!("No outputs parsed from swww query stdout: {}", stdout);
-            // Fallback to hardcoded values if parsing fails but query succeeded
-            outputs = vec!["HDMI-A-1".to_string(), "DP-2".to_string(), "DP-3".to_string()];
+            log::error!("Failed to detect any display outputs from swww query");
+            log::debug!("swww query output was: {}", stdout);
+            return Err(SwwwsError::Process(ProcessError::Execution {
+                command: "swww query - no outputs detected".to_string(),
+                source: std::io::Error::new(std::io::ErrorKind::NotFound, "No display outputs detected by swww"),
+            }));
         }
         
         log::info!("Found swww outputs: {:?}", outputs);

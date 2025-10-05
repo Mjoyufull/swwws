@@ -173,7 +173,8 @@ async fn initialize_output_queue(
     let image_path = match &output_config.path {
         Some(path_str) => PathBuf::from(path_str),
         None => {
-            log::warn!("No image path configured for output {}, skipping", output_name);
+            log::warn!("No wallpaper path configured for output '{}'", output_name);
+            log::warn!("  Add a path to [any] section or create [outputs.\"{}\"] section in config", output_name);
             return;
         }
     };
@@ -433,10 +434,12 @@ fn initialize_monitor_behavior(
             log::info!("Using synchronized monitor behavior - all outputs share the same queue");
             // Create a shared queue using the first available path
             let first_output = swww_outputs.first()
-                .ok_or_else(|| anyhow::anyhow!("No outputs available for synchronized mode"))?;
+                .ok_or_else(|| anyhow::anyhow!("No display outputs available for synchronized mode"))?;
             let output_config = config.get_output_config(first_output);
             let image_path = output_config.path.as_ref()
-                .ok_or_else(|| anyhow::anyhow!("No image path configured for synchronized mode"))?;
+                .ok_or_else(|| {
+                    anyhow::anyhow!("No wallpaper path configured for synchronized mode. Add 'path = \"/path/to/wallpapers\"' to [any] section in config")
+                })?;
             
             let discovered_images = ImageDiscovery::discover_images(&PathBuf::from(image_path))
                 .map_err(|e| anyhow::anyhow!("Failed to discover images for synchronized mode: {}", e.user_friendly_message()))?;
@@ -716,7 +719,32 @@ async fn main() -> anyhow::Result<()> {
     let has_groups = !state.groups.is_empty();
     
     if !has_individual_queues && !has_shared_queue && !has_groups {
-        return Err(anyhow::anyhow!("No valid wallpaper management initialized (no queues, groups, or shared queue)"));
+        let behavior_name = match config.get_effective_monitor_behavior() {
+            MonitorBehavior::Independent => "Independent",
+            MonitorBehavior::Synchronized => "Synchronized",
+            MonitorBehavior::Grouped(_) => "Grouped",
+        };
+        
+        log::error!("Failed to initialize wallpaper management for {} monitor behavior", behavior_name);
+        log::error!("Possible causes:");
+        log::error!("  - No wallpaper paths configured in config file");
+        log::error!("  - Configured paths don't exist or contain no valid images");
+        log::error!("  - Display outputs don't match configuration (found: {:?})", swww_outputs);
+        
+        // Give specific hints based on monitor behavior
+        match config.get_effective_monitor_behavior() {
+            MonitorBehavior::Independent => {
+                log::error!("  - For Independent mode: configure [any] path or specific [outputs.\"OUTPUT-NAME\"] sections");
+            },
+            MonitorBehavior::Synchronized => {
+                log::error!("  - For Synchronized mode: ensure [any] section has a valid 'path' setting");
+            },
+            MonitorBehavior::Grouped(_) => {
+                log::error!("  - For Grouped mode: ensure monitor_groups are configured with valid paths");
+            },
+        }
+        
+        return Err(anyhow::anyhow!("No valid wallpaper management initialized - check configuration and paths"));
     }
     
     log::info!("Daemon initialized successfully: {} individual queues, {} groups, shared queue: {}", 

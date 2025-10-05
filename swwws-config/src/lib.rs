@@ -227,35 +227,26 @@ impl Config {
                 source: e,
             }))?;
         
-        // Debug raw TOML content
-        log::info!("Raw TOML content: {:?}", content);
-        if let Some(line) = content.lines().find(|l| l.contains("monitor_behavior")) {
-            log::info!("Monitor behavior line: {:?}", line);
-        }
+        // Parse configuration content
+        log::debug!("Loading configuration from: {:?}", config_path);
         
         let mut config: Config = toml::from_str(&content)
             .map_err(|e| SwwwsError::Config(ConfigError::TomlParse {
                 message: e.to_string(),
             }))?;
         
-        // Manual parsing fix for monitor_behavior
+        // Apply monitor behavior configuration workaround
         if let Some(line) = content.lines().find(|l| l.contains("monitor_behavior")) {
             if line.contains("\"Synchronized\"") {
-                log::info!("Manually setting monitor_behavior to Synchronized");
                 config.monitor_behavior = MonitorBehavior::Synchronized;
             } else if line.contains("\"Independent\"") {
-                log::info!("Manually setting monitor_behavior to Independent");
                 config.monitor_behavior = MonitorBehavior::Independent;
             } else if line.contains("\"Grouped\"") {
-                log::info!("Manually setting monitor_behavior to Grouped");
-                // Use empty vec for now, groups will be handled by get_effective_monitor_behavior
                 config.monitor_behavior = MonitorBehavior::Grouped(vec![]);
             }
         }
         
-        // Debug log the parsed config
-        log::info!("Parsed monitor_behavior from config: {:?}", config.monitor_behavior);
-        log::info!("Effective monitor behavior: {:?}", config.get_effective_monitor_behavior());
+        log::debug!("Monitor behavior: {:?}", config.get_effective_monitor_behavior());
         
         // Validate the configuration
         config.validate()?;
