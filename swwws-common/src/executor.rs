@@ -237,9 +237,16 @@ impl ProcessExecutor {
                 continue;
             }
             
-            // Parse swww query output format: "OUTPUT_NAME: resolution, scale: ..."
-            if let Some(colon_pos) = line.find(':') {
-                let output_name = line[..colon_pos].trim();
+            // Handle swww query output format which can be:
+            // "OUTPUT_NAME: resolution, scale: ..." or ": OUTPUT_NAME: resolution, scale: ..."
+            let working_line = if line.starts_with(": ") {
+                &line[2..] // Skip the leading ": "
+            } else {
+                line
+            };
+            
+            if let Some(colon_pos) = working_line.find(':') {
+                let output_name = working_line[..colon_pos].trim();
                 if !output_name.is_empty() && output_name != "Output" {
                     // Validate output name contains typical display connector patterns
                     if output_name.contains('-') || output_name.to_uppercase().contains("HDMI") 
@@ -249,6 +256,7 @@ impl ProcessExecutor {
                         || output_name.to_uppercase().contains("VGA") 
                         || output_name.to_uppercase().contains("DVI") {
                         outputs.push(output_name.to_string());
+                        log::debug!("Found display output: {}", output_name);
                     }
                 }
             }
