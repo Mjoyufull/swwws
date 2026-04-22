@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+>  This project is now Depricated as i am now focusing development on [Kaleidux](https://github.com/Mjoyufull/kaleidux) 
+
 # swwws - Slideshow Daemon for swww
 
 **swwws** is a slideshow daemon that extends [swww](https://github.com/LGFae/swww) with automated wallpaper cycling and multi-monitor support. It combines swww's smooth transitions with slideshow functionality.
